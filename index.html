@@ -166,6 +166,9 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;fon
 .dash-switch-btn:hover{border-color:var(--border2);color:var(--text);}
 .dash-switch-btn.active{background:linear-gradient(135deg,rgba(183,28,28,0.25),rgba(229,57,53,0.12));color:var(--primary);border-color:rgba(229,57,53,0.4);}
 .sidebar.mini-mode .dash-switch{flex-direction:column;padding:8px 6px;}
+/* Dashboard switcher relocated into the top header */
+.topbar-switch{padding:0;border-bottom:none;gap:6px;margin:0 8px;flex-shrink:0;}
+.topbar-switch .dash-switch-btn{flex:0 0 auto;padding:7px 15px;font-size:12px;}
  
 .main{margin-left:220px;flex:1;display:flex;flex-direction:column;min-height:100vh;position:relative;z-index:1;transition:margin-left .3s cubic-bezier(.4,0,.2,1);min-width:0;}
 .main.sb-gone{margin-left:0;}
@@ -363,11 +366,7 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;fon
     <img src="https://raw.githubusercontent.com/parthjadav-create/trainer-dashboard/main/assets.png" alt="Petpooja Inventory Trainer"/>
   </div>
 
-  <!-- ══ DASHBOARD SWITCHER ══ -->
-  <div class="dash-switch">
-    <button class="dash-switch-btn active" id="ds-trainer" onclick="switchDash('trainer')">👨‍🏫 On-site</button>
-    <button class="dash-switch-btn" id="ds-demo" onclick="switchDash('demo')">🎬 Demo</button>
-  </div>
+
 
   <!-- ══ TRAINER NAV GROUP ══ -->
   <div id="trainer-nav-group">
@@ -407,6 +406,10 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;fon
         <div class="pg-title" id="top-dash-title">OnSite OpsVision Dashboard</div>
         <div class="pg-sub" id="top-dash-sub">Petpooja · Trainer Productivity & Performance Tracker</div>
       </div>
+    </div>
+    <div class="dash-switch topbar-switch">
+      <button class="dash-switch-btn active" data-dash="trainer" onclick="switchDash('trainer')">👨‍🏫 On-site</button>
+      <button class="dash-switch-btn" data-dash="demo" onclick="switchDash('demo')">🎬 Demo</button>
     </div>
     <div class="tb-right">
       <span id="sync-txt">–</span>
@@ -1118,6 +1121,10 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;fon
         <div class="pg-sub" id="d-top-sub">Petpooja · Demo / Training Completion Tracker</div>
       </div>
     </div>
+    <div class="dash-switch topbar-switch">
+      <button class="dash-switch-btn active" data-dash="trainer" onclick="switchDash('trainer')">👨‍🏫 On-site</button>
+      <button class="dash-switch-btn" data-dash="demo" onclick="switchDash('demo')">🎬 Demo</button>
+    </div>
     <div class="tb-right">
       <span id="d-sync-txt">–</span>
       <div class="live-pill"><div class="ld"></div><span id="d-live-txt">CONNECTING</span></div>
@@ -1253,7 +1260,7 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;fon
 </div>
  
 <script>
-var DEFAULT_API="https://script.google.com/macros/s/AKfycbyZGdAH515AQKpMHBkWsfKaN1Yc1mO2i-rdNQH_-_j8bkUGVVRM-scpFLZAy6rBSaiNOg/exec";
+var DEFAULT_API="https://script.google.com/macros/s/AKfycbxWLVUVTFupspgeV8JCIvQEu3iQi-4d9YbiYeJgkBmcigxAMCN7_B64Z8264K04bVzSZg/exec";
 var API=localStorage.getItem('api_url')||DEFAULT_API;
 var TARGET_PER_DAY=parseFloat(localStorage.getItem('target_std'))||2.5;
 var OFS_TARGET_PER_DAY=parseFloat(localStorage.getItem('target_ofs'))||3.0;
@@ -2288,9 +2295,9 @@ function switchDash(which){
   document.getElementById('main-demo').style.display=which==='demo'?'flex':'none';
   document.getElementById('trainer-nav-group').style.display=which==='trainer'?'block':'none';
   document.getElementById('demo-nav-group').style.display=which==='demo'?'block':'none';
-  var dt=document.getElementById('ds-trainer'),dd=document.getElementById('ds-demo');
-  if(dt)dt.classList.toggle('active',which==='trainer');
-  if(dd)dd.classList.toggle('active',which==='demo');
+  document.querySelectorAll('.dash-switch-btn').forEach(function(b){
+    b.classList.toggle('active', b.getAttribute('data-dash')===which);
+  });
   if(which==='demo'){ if(!dLoaded)dLoadData(); else dRender(); }
 }
 
